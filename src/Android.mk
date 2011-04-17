@@ -2,6 +2,8 @@ LOCAL_PATH:= $(call my-dir)
 
 include $(CLEAR_VARS)
 
+LOCAL_MODULE_TAGS:=eng debug
+
 LOCAL_SRC_FILES:= \
 	ne_207.c	\
 	ne_acl3744.c	\
