@@ -1,7 +1,154 @@
 ------------------------------------------------------------------------
-r1785 | joe | 2010-01-11 20:26:37 +0000 (Mon, 11 Jan 2010) | 1 line
+r1826 | joe | 2010-10-14 16:06:52 +0100 (Thu, 14 Oct 2010) | 1 line
 
-Tag release 0.29.3.
+Tag release 0.29.5.
+------------------------------------------------------------------------
+r1825 | joe | 2010-10-14 16:04:44 +0100 (Thu, 14 Oct 2010) | 2 lines
+
+* NEWS: Tweak.
+
+------------------------------------------------------------------------
+r1824 | joe | 2010-10-14 16:03:02 +0100 (Thu, 14 Oct 2010) | 2 lines
+
+* NEWS: Update with GnuTLS fix.
+
+------------------------------------------------------------------------
+r1823 | joe | 2010-10-14 16:02:41 +0100 (Thu, 14 Oct 2010) | 10 lines
+
+Merge r1818 from trunk:
+
+* test/socket.c (addr_reverse) [HAVE_GETHOSTNAME]: Accept system
+  hostname as reverse of 127.0.0.1.
+
+* macros/neon-test.m4 (NEON_TEST): Check for gethostname().
+
+Submitted by: joe
+Reviewed by: jorton
+
+------------------------------------------------------------------------
+r1822 | joe | 2010-10-14 16:01:53 +0100 (Thu, 14 Oct 2010) | 2 lines
+
+* NEWS, macros/neon.m4: Prepare for 0.29.5.
+
+------------------------------------------------------------------------
+r1821 | joe | 2010-10-14 16:00:53 +0100 (Thu, 14 Oct 2010) | 6 lines
+
+Merge r1797 from trunk:
+
+* src/ne_auth.c: Add handling of 2xx responses in SSPI code.
+(Danil Shopyrin <danil visualsvn.com>)
+
+
+------------------------------------------------------------------------
+r1820 | joe | 2010-10-09 17:07:17 +0100 (Sat, 09 Oct 2010) | 6 lines
+
+Merge r1819 from trunk:
+
+* src/ne_socket.c (ne_sock_connect_ssl): Ignore TLS warnings
+  during handshake (Bryan Cain).
+
+
+------------------------------------------------------------------------
+r1816 | joe | 2010-10-01 13:00:02 +0100 (Fri, 01 Oct 2010) | 2 lines
+
+* po/: make update-po.
+
+------------------------------------------------------------------------
+r1814 | joe | 2010-09-28 13:02:37 +0100 (Tue, 28 Sep 2010) | 2 lines
+
+* NEWS: Update.
+
+------------------------------------------------------------------------
+r1813 | joe | 2010-09-28 13:00:48 +0100 (Tue, 28 Sep 2010) | 10 lines
+
+Merge r1811 from trunk:
+
+* src/ne_session.c (ne__ssl_match_hostname): Deny a wildcard match
+  against anything which parses as an IP address.
+
+* test/ssl.c (fail_wildcard_ip): Add test case.
+
+* test/makekeys.sh: Generate test wildcard IP cert.
+
+
+------------------------------------------------------------------------
+r1812 | joe | 2010-09-28 12:57:26 +0100 (Tue, 28 Sep 2010) | 8 lines
+
+Merge r1809 from trunk:
+
+* src/ne_request.c (open_connection): If SOCKS proxy fails, set return
+  value to NE_ERROR.
+
+* test/request.c (socks_fail): Add test case.
+
+
+------------------------------------------------------------------------
+r1808 | joe | 2010-09-22 21:42:08 +0100 (Wed, 22 Sep 2010) | 2 lines
+
+* NEWS: Update for 0.29.4.
+
+------------------------------------------------------------------------
+r1807 | joe | 2010-09-22 20:33:36 +0100 (Wed, 22 Sep 2010) | 9 lines
+
+Merge r1801 from trunk:
+
+* src/ne_request.c (body_fd_send): Handle read() errors; thanks to Lou
+  Montulli.
+
+* test/request.c (serve_mirror, send_length): Add test case.
+
+* test/Makefile.in (foobar.txt): Create test file.
+
+------------------------------------------------------------------------
+r1806 | joe | 2010-09-22 20:25:52 +0100 (Wed, 22 Sep 2010) | 8 lines
+
+Merge r1802, r1805 from trunk:
+
+* macros/neon.m4 (NE_CHECK_FUNCS): Fix AI_ADDRCONFIG detection.
+
+* src/ne_auth.c (ah_post_send): Always clear the SSPI context.
+(Danil Shopyrin)
+
+
+------------------------------------------------------------------------
+r1800 | joe | 2010-05-05 09:13:00 +0100 (Wed, 05 May 2010) | 5 lines
+
+Merge r1794 from trunk:
+
+* src/ne_session.c (ne_session_create): Fix to enable SNI by default again.
+  (Tobias Gruetzmacher)
+
+------------------------------------------------------------------------
+r1796 | joe | 2010-03-29 10:19:04 +0100 (Mon, 29 Mar 2010) | 9 lines
+
+Merge r1792, r1793, r1795 from trunk:
+
+* src/ne_request.c (do_connect): Tweak debugging.
+
+* doc/ref/: Fix some refpurposes.
+
+* doc/ref/reqflags.xml: Doc tweak.
+
+
+------------------------------------------------------------------------
+r1790 | joe | 2010-02-08 09:52:54 +0000 (Mon, 08 Feb 2010) | 2 lines
+
+* macros/neon-test.m4: Test for signal.h
+
+------------------------------------------------------------------------
+r1787 | joe | 2010-01-11 22:59:31 +0000 (Mon, 11 Jan 2010) | 2 lines
+
+* macros/neon.m4, NEWS: Missed a backport :(
+
+------------------------------------------------------------------------
+r1786 | joe | 2010-01-11 22:57:34 +0000 (Mon, 11 Jan 2010) | 6 lines
+
+Merge r1777 from trunk:
+
+* src/ne_defs.h: Only define NE_PRIVATE if undefined.
+
+* configure.in: Define NE_PRIVATE to 'extern' for a static build.
+
 ------------------------------------------------------------------------
 r1784 | joe | 2010-01-11 20:21:21 +0000 (Mon, 11 Jan 2010) | 2 lines
 

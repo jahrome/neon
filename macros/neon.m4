@@ -1,4 +1,4 @@
-# Copyright (C) 1998-2009 Joe Orton <joe@manyfish.co.uk>    -*- autoconf -*-
+# Copyright (C) 1998-2010 Joe Orton <joe@manyfish.co.uk>    -*- autoconf -*-
 # Copyright (C) 2004 Aleix Conchillo Flaque <aleix@member.fsf.org>
 #
 # This file is free software; you may copy and/or distribute it with
@@ -137,7 +137,7 @@ AC_DEFUN([NE_VERSIONS_BUNDLED], [
 # Define the current versions.
 NE_VERSION_MAJOR=0
 NE_VERSION_MINOR=29
-NE_VERSION_PATCH=3
+NE_VERSION_PATCH=5
 NE_VERSION_TAG=
 
 # 0.29.x is backwards-compatible to 0.27.x, so AGE=2
@@ -653,7 +653,8 @@ if test $ne_enable_gai = yes; then
    NE_ENABLE_SUPPORT(IPV6, [IPv6 support is enabled])
    AC_DEFINE(USE_GETADDRINFO, 1, [Define if getaddrinfo() should be used])
    AC_CACHE_CHECK([for working AI_ADDRCONFIG], [ne_cv_gai_addrconfig], [
-   AC_RUN_IFELSE([AC_LANG_PROGRAM([#include <netdb.h>],
+   AC_RUN_IFELSE([AC_LANG_PROGRAM([#include <netdb.h>
+#include <stdlib.h>],
 [struct addrinfo hints = {0}, *result;
 hints.ai_flags = AI_ADDRCONFIG;
 if (getaddrinfo("localhost", NULL, &hints, &result) != 0) return 1;])],

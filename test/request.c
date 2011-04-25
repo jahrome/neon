@@ -1,6 +1,6 @@
 /* 
    HTTP request handling tests
-   Copyright (C) 2001-2009, Joe Orton <joe@manyfish.co.uk>
+   Copyright (C) 2001-2010, Joe Orton <joe@manyfish.co.uk>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 #include <unistd.h>
 #endif
 #include <fcntl.h>
+#include <errno.h>
 
 #include "ne_request.h"
 #include "ne_socket.h"
@@ -2236,6 +2237,98 @@ static int socks_v4_proxy(void)
     return await_server();
 }
 
+/* Server function which serves the request body back as the response
+ * body. */
+static int serve_mirror(ne_socket *sock, void *userdata)
+{
+    char response[1024];
+
+    CALL(discard_request(sock));
+
+    ONV(clength == 0 || (size_t)clength > sizeof buffer, 
+        ("C-L out of bounds: %d", clength));
+
+    ONV(ne_sock_fullread(sock, buffer, clength),
+        ("read failed: %s", ne_sock_error(sock)));
+    
+    ne_snprintf(response, sizeof response,
+                "HTTP/1.0 200 OK\r\n"
+                "Content-Length: %d\r\n"
+                "\r\n", clength);
+
+    ONN("send response header failed",
+        server_send(sock, response, strlen(response)));
+    
+    ONN("send response body failed",
+        server_send(sock, buffer, clength));
+
+    ONV(ne_sock_read(sock, buffer, 1) != NE_SOCK_CLOSED,
+        ("client sent data after request: %c", buffer[0]));
+
+    return OK;
+}
+
+/* Test for ne_set_request_body_fd() bug in <= 0.29.3. */
+static int send_length(void)
+{
+    ne_session *sess;
+    ne_request *req;
+    int fd;
+    ne_buffer *buf = ne_buffer_create();
+
+    fd = open("foobar.txt", O_RDONLY);
+    ONV(fd < 0, ("open random.txt failed: %s", strerror(errno)));
+
+    CALL(make_session(&sess, serve_mirror, NULL));
+
+    req = ne_request_create(sess, "GET", "/foo");
+    
+    ne_set_request_body_fd(req, fd, 0, 3);
+    ne_add_response_body_reader(req, ne_accept_2xx, collector, buf);
+
+    ONREQ(ne_request_dispatch(req));
+
+    ONCMP("foo", buf->data, "response body", "match");
+
+    ne_request_destroy(req);
+    ne_session_destroy(sess);
+    close(fd);
+    return await_server();
+}
+
+/* Test for error code for a SOCKS proxy failure, bug in <= 0.29.3. */
+static int socks_fail(void)
+{
+    ne_session *sess;
+    struct socks_server srv = {0};
+    int ret;
+
+    srv.version = NE_SOCK_SOCKSV5;
+    srv.failure = fail_init_vers;
+    srv.expect_port = 4242;
+    srv.expect_addr = ne_iaddr_parse("127.0.0.1", ne_iaddr_ipv4);
+    srv.expect_fqdn = "localhost";
+    srv.username = "bloggs";
+    srv.password = "guessme";
+    
+    CALL(socks_session(&sess, &srv, srv.expect_fqdn, srv.expect_port,
+                       single_serve_string, EMPTY_RESP));
+
+    ret = any_request(sess, "/blee");
+    ONV(ret != NE_ERROR,
+        ("request failed with %d not NE_ERROR", ret));
+    ONV(strstr(ne_get_error(sess), 
+               "Could not establish connection from SOCKS proxy") == NULL
+        || strstr(ne_get_error(sess),
+                  "Invalid version in proxy response") == NULL,
+        ("unexpected error string: %s", ne_get_error(sess)));
+
+    ne_iaddr_free(srv.expect_addr);
+
+    ne_session_destroy(sess);
+    return await_server();
+}
+
 /* TODO: test that ne_set_notifier(, NULL, NULL) DTRT too. */
 
 ne_test tests[] = {
@@ -2327,5 +2420,7 @@ ne_test tests[] = {
     T(addrlist),
     T(socks_proxy),
     T(socks_v4_proxy),
+    T(send_length),
+    T(socks_fail),
     T(NULL)
 };
